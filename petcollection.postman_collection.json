@@ -1,0 +1,291 @@
+{
+	"info": {
+		"_postman_id": "ab63cf04-a8dd-4b03-94b1-8e9890804120",
+		"name": "petcollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42601906",
+		"_collection_link": "https://destiny-is-all.postman.co/workspace/PetData~2820928b-621f-439b-8ce3-f23151ece297/collection/42601906-ab63cf04-a8dd-4b03-94b1-8e9890804120?action=share&source=collection_link&creator=42601906"
+	},
+	"item": [
+		{
+			"name": "PostRequest",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Postman Tests for POST request\r",
+							" \r",
+							"// 1. Validate Response Status Code is 200\r",
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							" \r",
+							"// 2. Validate Response Body contains text 'available'\r",
+							"pm.test(\"Response body contains 'available' status\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"available\");\r",
+							"});\r",
+							" \r",
+							"// Optional: Store the created ID for subsequent requests (GET, PUT, DELETE)\r",
+							"// This is crucial for linking requests in the collection run.\r",
+							"var responseJson = pm.response.json();\r",
+							"pm.environment.set(\"createdPetId\", responseJson.id);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": {{id}},\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"{{name}}\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"{{status}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetRequest",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Pre-request script for GET request\r",
+							"// This script is technically not needed if the URL uses {{id}} directly,\r",
+							"// but it's good practice to ensure the variable is set.\r",
+							"var petIdFromCSV = pm.iterationData.get(\"id\");\r",
+							" \r",
+							"// Set it as an environment variable just in case\r",
+							"pm.environment.set(\"currentPetId\", petIdFromCSV);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Postman Tests for GET request\r",
+							" \r",
+							"// 1. Validate Response Status Code is 200\r",
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							" \r",
+							"// 2. Validate the retrieved ID matches the sent ID (from CSV)\r",
+							"var responseJson = pm.response.json();\r",
+							"// Get 'id' from CSV data and convert it to a Number\r",
+							"var expectedId = parseInt(pm.iterationData.get(\"id\"));\r",
+							" \r",
+							"pm.test(\"Retrieved Pet ID matches expected ID\", function () {\r",
+							"    // Compare the number from CSV with the number from the JSON response\r",
+							"    pm.expect(responseJson.id).to.equal(expectedId);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet/{{id}}",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PutRequest",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Postman Tests for PUT request\r",
+							" \r",
+							"// 1. Validate Response Status Code is 200\r",
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							" \r",
+							"// 2. Validate the updated name is 'Puppy'\r",
+							"var responseJson = pm.response.json();\r",
+							"pm.test(\"Pet name is successfully updated to 'Puppy'\", function () {\r",
+							"    pm.expect(responseJson.name).to.equal(\"Puppy\");\r",
+							"});\r",
+							" "
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": {{id}},\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"Puppy\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"{{status}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteRequest",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Postman Tests for DELETE request\r",
+							" \r",
+							"// 1. Validate Response Status Code is 200\r",
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							" \r",
+							"// 2. Validate Response Body contains 'message' equal to the ID (e.g., \"344\")\r",
+							"var responseJson = pm.response.json();\r",
+							"// Get 'id' from CSV data and convert it to a Number\r",
+							"var expectedId = parseInt(pm.iterationData.get(\"id\"));\r",
+							" \r",
+							"pm.test(\"Retrieved Pet ID matches expected ID\", function () {\r",
+							"    // Compare the number from CSV with the number from the JSON response\r",
+							"    pm.expect(responseJson.id).to.equal(expectedId);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet/{{currentPetId}}",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet",
+						"{{currentPetId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"value": ""
+		}
+	]
+}
